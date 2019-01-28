@@ -30,3 +30,4 @@ Validacija:
 u sistemu
  Ne smijete dozvoliti transfer ukoliko je broj target računa nevažedi / ne postoji target račun u
 sistemu
+-------------------------------------------------------------------------
