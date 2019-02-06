@@ -1,6 +1,11 @@
 package codes;
 
+import java.io.BufferedWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Ova klasa se koristi za kreiranje racuna u bankomat aplikaciji
@@ -13,7 +18,8 @@ public class KreirajRacun {
 	private int brojRacuna;
 	private String imeVlasnikaRacuna;
 	private double iznosNaRacunu;
-	public static ArrayList<KreirajRacun> lista = new ArrayList<>();
+	public static ArrayList<KreirajRacun> racuni = new ArrayList<>();
+	private static Path path = Paths.get("racuni.txt");
 	
 	/**
 	 * Defaultni kontruktor koji ne prima argumente
@@ -35,7 +41,7 @@ public class KreirajRacun {
 		this.brojRacuna = brojRacuna;
 		this.imeVlasnikaRacuna = imeVlasnikaRacuna;
 		this.iznosNaRacunu = iznosNaRacunu;
-		lista.add(this);
+		racuni.add(this);
 		
 		System.out.println("Racun je uspjesno kreiran.");
 		}else
@@ -64,8 +70,8 @@ public class KreirajRacun {
 	 * @return vraca false ukoliko vec postoji racun sa tim brojem
 	 */
 	public static boolean provjeraDuplikataBrojaRacuna(int brojRacuna) {
-		for(int i = 0; i < lista.size(); i++) {
-			if(lista.get(i).brojRacuna == brojRacuna) {
+		for(int i = 0; i < racuni.size(); i++) {
+			if(racuni.get(i).brojRacuna == brojRacuna) {
 				System.out.println("Racun se ne moze kreirati, uneseni broj vec postoji!");
 				return false;
 			}
@@ -93,8 +99,8 @@ public class KreirajRacun {
 	 */
 	public static boolean provjeraPostojanjaSourceRacuna(int sourceAcc) {
 		boolean postojiSourceAcc = false;
-		for(int i = 0; i < lista.size(); i++) {
-			if(lista.get(i).brojRacuna == sourceAcc) {
+		for(int i = 0; i < racuni.size(); i++) {
+			if(racuni.get(i).brojRacuna == sourceAcc) {
 				postojiSourceAcc = true;
 			} 
 		}
@@ -109,8 +115,8 @@ public class KreirajRacun {
 	 */
 	public static boolean provjeraPostojanjaTargetRacuna(int targetAcc) {
 		boolean postojiTargetAcc = false;
-		for(int i = 0; i < lista.size(); i++) {
-			if(lista.get(i).brojRacuna == targetAcc) {	
+		for(int i = 0; i < racuni.size(); i++) {
+			if(racuni.get(i).brojRacuna == targetAcc) {	
 				postojiTargetAcc = true;
 			}
 		}
@@ -124,8 +130,8 @@ public class KreirajRacun {
 	 * @return vraca false ukoliko je iznos koji postoji na sourceAcc manji od iznosa koji zelimo prebaciti na targetAcc
 	 */
 	public static boolean provjeraIznosaNaSourceAcc(double iznos) {
-		for(int i = 0; i < lista.size(); i++) {
-			if(lista.get(i).iznosNaRacunu < iznos) {
+		for(int i = 0; i < racuni.size(); i++) {
+			if(racuni.get(i).iznosNaRacunu < iznos) {
 				return false;
 			}
 		}
@@ -142,12 +148,12 @@ public class KreirajRacun {
 	 */
 	public static boolean transferNovca (int sourceAcc, int targetAcc, double iznos) {
 		if(provjeraPostojanjaSourceRacuna(sourceAcc) && provjeraPostojanjaTargetRacuna(targetAcc) && provjeraIznosaNaSourceAcc(iznos)) {
-			for(int i = 0; i < lista.size(); i++) {
-				if(lista.get(i).brojRacuna == sourceAcc && lista.get(i).iznosNaRacunu >= iznos)
-					lista.get(i).iznosNaRacunu -= iznos;
+			for(int i = 0; i < racuni.size(); i++) {
+				if(racuni.get(i).brojRacuna == sourceAcc && racuni.get(i).iznosNaRacunu >= iznos)
+					racuni.get(i).iznosNaRacunu -= iznos;
 				
-				if(lista.get(i).brojRacuna == targetAcc)
-					lista.get(i).iznosNaRacunu += iznos;
+				if(racuni.get(i).brojRacuna == targetAcc)
+					racuni.get(i).iznosNaRacunu += iznos;
 			}
 			System.out.println("Transakcija je uspjesna!");
 			return true;
@@ -164,9 +170,9 @@ public class KreirajRacun {
 	 */
 	public static boolean ispisRacuna(int brojRacuna) {
 
-		for (int i = 0; i < lista.size(); i++)
-			if (lista.get(i).brojRacuna == brojRacuna) {
-				System.out.println(lista.get(i).toString());
+		for (int i = 0; i < racuni.size(); i++)
+			if (racuni.get(i).brojRacuna == brojRacuna) {
+				System.out.println(racuni.get(i).toString());
 				return true;
 			}
 
@@ -182,14 +188,40 @@ public class KreirajRacun {
 		return "\n Broj racuna: " + "[" + brojRacuna +"]" + "\n Ime Vlasnika: " +  "[" + imeVlasnikaRacuna +"]" + "\n Trenutno stanje: " + "[" + iznosNaRacunu + " KM.]";
 	}
 	
-	
-	
-/*	
-	public static void addOnLoad(KreirajRacun racun) {
-		lista.add(racun);
+	/**
+	 * Metoda za snimanje(zapisivanje) kreiranih racuna u file racuni.txt
+	 * @throws Exception
+	 */
+	public static void save() throws Exception{
+		if(!Files.exists(path)) {
+			Files.createFile(path);
+		}
+		BufferedWriter writer = Files.newBufferedWriter(path);
+		for(int i = 0; i < racuni.size(); i++) {
+			writer.write(racuni.get(i).brojRacuna + " " + racuni.get(i).imeVlasnikaRacuna + " "
+					+ racuni.get(i).iznosNaRacunu);
+			writer.newLine();
+		}
+		writer.close();
 	}
-	*/
-
+	
+	/**
+	 * Metoda za ucitavanje file-a racuni.txt te iscitavanje zapisanih racuna, kreiranje objekata zapisanih u fajlu koji
+	 * se dodaju u listu racuni
+	 * @throws Exception
+	 */
+	public static void  loadFile() throws Exception {
+		if(!Files.exists(path)) {
+			Files.createFile(path);
+		}
+		Scanner ucitajRacune = new Scanner(path);
+		
+		while(ucitajRacune.hasNext())
+			new KreirajRacun(ucitajRacune.nextInt(), ucitajRacune.next(), ucitajRacune.nextDouble());
+		ucitajRacune.close();
+	}
+	
+	
 	/**
 	 * Getter za broj racuna
 	 * @return broj racuna

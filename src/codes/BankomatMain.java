@@ -1,6 +1,7 @@
 package codes;
 
 import java.util.InputMismatchException;
+
 import java.util.Scanner;
 
 /**
@@ -16,6 +17,11 @@ public class BankomatMain {
 	public static void main(String[] args) throws Exception {
 
 		/**
+		 * Poziv metode loadFile iz klase KreirajRacun
+		 */
+		KreirajRacun.loadFile();
+		
+		/**
 		 * Poziv metode za izbornik opcija
 		 */
 		menu();
@@ -26,7 +32,7 @@ public class BankomatMain {
 	 * Ispis opcija koje korisnik moze izabrati
 	 * 
 	 */
-	public static void menu() {
+	public static void menu() throws Exception {
 		
 			System.out.println("Dobrodosli u Bankomat Aplikaciju");
 			System.out.println("Izaberite zeljenu opciju: " + 
@@ -53,7 +59,8 @@ public class BankomatMain {
 			case 1: kreiranjeNovogRacuna(); break;
 			case 2: transferNovca(); break;
 			case 3: ispisDetaljaKreiranihRacuna(); break;
-			case 4: System.out.println("Izabrali ste izlaz iz aplikacije.\nHvala na povjerenju!\nDodjite nam ponovo.");
+			case 4: KreirajRacun.save();
+			System.out.println("Izabrali ste izlaz iz aplikacije.\nHvala na povjerenju!\nDodjite nam ponovo.");
 			System.exit(korisnikovUnos);					
 			}
 		}		
@@ -62,7 +69,7 @@ public class BankomatMain {
 	 * Metoda koja uzima inpute od korisnika (broj racuna, ime vlasnika i iznos sredstava) potrebnih za kreiranje novog racuna
 	 * 
 	 */
-	public static void kreiranjeNovogRacuna() {
+	public static void kreiranjeNovogRacuna() throws Exception {
 		
 		System.out.println("Izabrali ste opciju kreiranja novog racuna");
 		System.out.println("*******************************************");
@@ -88,7 +95,7 @@ public class BankomatMain {
 	 * obavljanje transfera novca sa sourceAcc na targetAcc
 	 * te preko poziva metode iz klase KreirajRacun izvrsava transfer novca
 	 */
-	public static void transferNovca() {
+	public static void transferNovca() throws Exception {
 		System.out.println("Izabrali ste opciju za transfer sredstava sa jednog racuna na drugi");
 		System.out.println("********************************************************************");
 		
@@ -116,7 +123,7 @@ public class BankomatMain {
 	 * Metoda koja uzima input od korisnika (broj racuna) potreban za ispis detalja kreiranog racuna
 	 * te preko metode ispisRacuna iz KreirajRacun klase izvrsava ispis detalja racuna koji je trazen 
 	 */
-	public static void ispisDetaljaKreiranihRacuna() {
+	public static void ispisDetaljaKreiranihRacuna() throws Exception {
 		System.out.println("Izabrali ste opciju za ispis detalja kreiranih racuna");
 		System.out.println("******************************************************");
 		
